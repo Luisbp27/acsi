@@ -22,6 +22,7 @@ dispositivos = len(V)
 N = int(input("Introduce el número de trabajos: "))
 Z = int(input("Introduce el tiempo de reflexión: "))
 
+
 def __main__(): 
     """ Algoritmo para el análisis del valor medio para redes de colas cerradas"""
 
@@ -35,15 +36,10 @@ def __main__():
 
         # Para todos los dispositivos
         for i in range(dispositivos):
-            Ri = formatear(calcularRi(n, i))
-            Xi = formatear(calcularXi(n, i))
-            Ni = formatear(calcularNi(n, i))
-            Ui = formatear(calcularUi(n, i))
-
-            print(f"R_{i}({n}) = {Ri}")
-            print(f"X_{i}({n}) = {Xi}")
-            print(f"N_{i}({n}) = {Ni}")
-            print(f"U_{i}({n}) = {Ui}")
+            print(f"R_{i}({n}) = {formatear(calcularRi(n, i))}")
+            print(f"X_{i}({n}) = {formatear(calcularXi(n, i))}")
+            print(f"N_{i}({n}) = {formatear(calcularNi(n, i))}")
+            print(f"U_{i}({n}) = {formatear(calcularUi(n, i))}")
         print("")
 
 # Función para formatear los resultados
@@ -56,7 +52,7 @@ def calcularR(n):
 
 # Función para calcular la productividad del sistema
 def calcularX(n):
-    return n / (Z * calcularR(n))
+    return n / (Z + calcularR(n))
 
 # Función para calcular la productividad de un dispositivo
 def calcularXi(n, i):
