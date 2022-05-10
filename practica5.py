@@ -1,60 +1,79 @@
 import csv
-from importlib.machinery import FrozenImporter
 
-def __main__():
-    # Ri(N) = [Ni(N-1)+1] x Si
-    # (N-1) es el número de trabajos
+# Leemos el fichero con los datos
+with open("data.txt", "r") as f:
+    csv_reader = list(csv.reader(f, delimiter=" "))
 
-    with open ("data.txt", "r") as f:
-        csv_reader = list(csv.reader(f, delimiter=" "))
+# Eliminamos la cabecera de las columnas
+csv_reader.pop(0)
 
-    csv_reader.pop(0)
-    Vi = []
-    Si = []
-    Ri = []
-    R = []
-    X = []
-    N = []
+# Declaramos la razón de visita y el tiempo de servicio
+V = []
+S = []
 
-    for i in range(len(csv_reader)):
-        Vi.append(int(csv_reader[i][0]))
-        Si.append(int(csv_reader[i][1]))
+# Almacenamos los datos del fichero en los arrays correspondientes
+for i in range(len(csv_reader)):
+    V.append(float(csv_reader[i][0]))
+    S.append(float(csv_reader[i][1]))
 
-    dispositivos = len(Vi)
-    N = input("Introduce el número de trabajos: ")
-    Z = input("Introduce el tiempo de reflexión: ")
+dispositivos = len(V)
 
-    for n in range(1, N):
+# Almacenamos el input del usuario
+N = int(input("Introduce el número de trabajos: "))
+Z = int(input("Introduce el tiempo de reflexión: "))
+
+def __main__(): 
+    """ Algoritmo para el análisis del valor medio para redes de colas cerradas"""
+
+    # Para todos los trabajos
+    for n in range(1, N + 1):
+        print(f"----- Job {n} -----")
+
+        # Calculamos el tiempo de respuesta y la productividad del sistema
+        print(f"R_({n}) = {formatear(calcularR(n))}")
+        print(f"X_({n}) = {formatear(calcularX(n))}")
+
+        # Para todos los dispositivos
         for i in range(dispositivos):
-            Ri.append(calcularRi(N, csv_reader[i][1]))   
+            Ri = formatear(calcularRi(n, i))
+            Xi = formatear(calcularXi(n, i))
+            Ni = formatear(calcularNi(n, i))
+            Ui = formatear(calcularUi(n, i))
 
-        R.append(calcularR(n, Ri, Vi))
-        X.append(calcularX(n, Z, Vi, R[n]))
+            print(f"R_{i}({n}) = {Ri}")
+            print(f"X_{i}({n}) = {Xi}")
+            print(f"N_{i}({n}) = {Ni}")
+            print(f"U_{i}({n}) = {Ui}")
+        print("")
 
-        for i in range(dispositivos):
-            N.append(X[n], Vi[i], Si[i])
+# Función para formatear los resultados
+def formatear(x):
+    return float(('%.4f' % x).rstrip('0').rstrip('.'))
 
-    print(R)
-    # Imprimir id + ri + r + x + ni
-    # Imprimir r y x como los datos más importantes
+# Función para calcular el tiempo de respuesta
+def calcularR(n):
+    return sum(V[i] * calcularRi(n, i) for i in range(dispositivos))
 
-def calcularR(n, Ri, Vi): 
-    if n != 0:
-        return Ri[n - 1] + (Vi[n] * Ri[n])
-    else:
-        return Vi[n] * Ri[n]
+# Función para calcular la productividad del sistema
+def calcularX(n):
+    return n / (Z * calcularR(n))
 
-def calcularX(n, Z, R):
-    return n / (Z * R)
+# Función para calcular la productividad de un dispositivo
+def calcularXi(n, i):
+    return calcularX(n) * V[i]
 
-def calcularNi(X, Vi, Si):
-    return X * Vi * Si
+# Función para calcular el número de trabajos de un dispositivo
+def calcularNi(n, i):
+    return (calcularX(n) * V[i] * calcularRi(n, i) if n != 0 else 0)
 
-def calcularRi(N, Si):
-    return (N * (N - 1) + 1) * Si
+# Función para calcular el tiempo de respuesta de un dispositivo
+def calcularRi(n, i):
+    return (calcularNi(n - 1, i) + 1) * S[i]
 
-def calcularUi():
-    pass
+# Función para calcular la utilización de un dispositivo
+def calcularUi(n, i):
+    return calcularX(n) * V[i] * S[i]
+
 
 if __name__ == '__main__':
     __main__()
