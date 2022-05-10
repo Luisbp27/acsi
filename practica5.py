@@ -11,6 +11,9 @@ csv_reader.pop(0)
 V = []
 S = []
 
+# Declaramos el arrays del fichero de salida
+filas = []
+
 # Almacenamos los datos del fichero en los arrays correspondientes
 for i in range(len(csv_reader)):
     V.append(float(csv_reader[i][0]))
@@ -25,22 +28,41 @@ Z = int(input("Introduce el tiempo de reflexión: "))
 
 def __main__(): 
     """ Algoritmo para el análisis del valor medio para redes de colas cerradas"""
+    
+    # Definimos la cabecera del fichero de salida
+    filas.append(["Trabajos", "R", "X", "R_i","X_i","N_i","U_i"])
 
     # Para todos los trabajos
     for n in range(1, N + 1):
         print(f"----- Job {n} -----")
 
         # Calculamos el tiempo de respuesta y la productividad del sistema
-        print(f"R_({n}) = {formatear(calcularR(n))}")
-        print(f"X_({n}) = {formatear(calcularX(n))}")
+        R = formatear(calcularR(n))
+        X = formatear(calcularX(n))
+
+        print(f"R_({n}) = {R}")
+        print(f"X_({n}) = {X}")
 
         # Para todos los dispositivos
         for i in range(dispositivos):
-            print(f"R_{i}({n}) = {formatear(calcularRi(n, i))}")
-            print(f"X_{i}({n}) = {formatear(calcularXi(n, i))}")
-            print(f"N_{i}({n}) = {formatear(calcularNi(n, i))}")
-            print(f"U_{i}({n}) = {formatear(calcularUi(n, i))}")
+            Ri = formatear(calcularRi(n, i))
+            Xi = formatear(calcularXi(n, i))
+            Ni = formatear(calcularNi(n, i))
+            Ui = formatear(calcularUi(n, i))
+
+            if not i % 2 == 0:
+                filas.append([n, R, X, Ri, Xi, Ni, Ui])
+
+            print(f"R_{i}({n}) = {Ri}")
+            print(f"X_{i}({n}) = {Xi}")
+            print(f"N_{i}({n}) = {Ni}")
+            print(f"U_{i}({n}) = {Ui}")
         print("")
+
+    with open('final.txt', 'w') as f:
+        write = csv.writer(f)
+
+        write.writerows(filas)
 
 # Función para formatear los resultados
 def formatear(x):
