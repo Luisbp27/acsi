@@ -1,5 +1,4 @@
 import csv
-import pandas as pd
 import matplotlib.pyplot as plt
 
 # Leemos el fichero con los datos
@@ -55,25 +54,27 @@ def __main__():
 
         write.writerows(resultados)
 
-    # Graficamos los resultados
+    # Almacenamos los valores del eje x para todas las graficas
     j = 0
     eje_x = [fila[j] for fila in resultados]
 
+    # Almacenamos las cabeceras de los valores del eje y
     cabeceras = [
-        "Tiempo de respuesta del sistema", 
-        "Productividad del sistema", 
-        "Tiempo de respuesta de los dispositivos",
-        "Productividad de los dispositivos",
+        "Tiempo de respuesta del sistema (s)", 
+        "Productividad del sistema (trabajos/s)", 
+        "Tiempo de respuesta de los dispositivos (s)",
+        "Productividad de los dispositivos (trabajos/s)",
         "Trabajos de los dispositivos",
-        "Utilización de los dispositivos"]
-    
+        "Utilización de los dispositivos (%)"]
+
+    # Graficamos los resultados
     for i in range(len(cabeceras)):
+        plt.figure()
         eje_y = [fila[i] for fila in resultados]
-        print(eje_y)
         plt.plot(eje_x, eje_y)
         plt.xlabel("Trabajos")
         plt.ylabel(f"{cabeceras[i]}")
-        plt.title(f"Algoritmo del Valor Medio - {cabeceras[i]}")
+        plt.title(f"{cabeceras[i]} frente a los Trabajos")
         plt.savefig(f"{cabeceras[i]}.png")
 
 # Función para formatear los resultados
