@@ -1,4 +1,6 @@
 import csv
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # Leemos el fichero con los datos
 with open("data.txt", "r") as f:
@@ -11,15 +13,15 @@ csv_reader.pop(0)
 V = []
 S = []
 
-# Declaramos el arrays del fichero de salida
-filas = []
-
 # Almacenamos los datos del fichero en los arrays correspondientes
 for i in range(len(csv_reader)):
     V.append(float(csv_reader[i][0]))
     S.append(float(csv_reader[i][1]))
 
 dispositivos = len(V)
+
+# Array bidimensional que contendra los resultados obtenidos
+resultados = []
 
 # Almacenamos el input del usuario
 N = int(input("Introduce el número de trabajos: "))
@@ -28,9 +30,6 @@ Z = int(input("Introduce el tiempo de reflexión: "))
 
 def __main__(): 
     """ Algoritmo para el análisis del valor medio para redes de colas cerradas"""
-    
-    # Definimos la cabecera del fichero de salida
-    filas.append(["Trabajos", "R", "X", "R_i","X_i","N_i","U_i"])
 
     # Para todos los trabajos
     for n in range(1, N + 1):
@@ -40,9 +39,6 @@ def __main__():
         R = formatear(calcularR(n))
         X = formatear(calcularX(n))
 
-        print(f"R_({n}) = {R}")
-        print(f"X_({n}) = {X}")
-
         # Para todos los dispositivos
         for i in range(dispositivos):
             Ri = formatear(calcularRi(n, i))
@@ -51,18 +47,34 @@ def __main__():
             Ui = formatear(calcularUi(n, i))
 
             if not i % 2 == 0:
-                filas.append([n, R, X, Ri, Xi, Ni, Ui])
+                resultados.append([n, R, X, Ri, Xi, Ni, Ui])
 
-            print(f"R_{i}({n}) = {Ri}")
-            print(f"X_{i}({n}) = {Xi}")
-            print(f"N_{i}({n}) = {Ni}")
-            print(f"U_{i}({n}) = {Ui}")
-        print("")
-
-    with open('final.txt', 'w') as f:
+    # Almacenamos los resultados en un fichero
+    with open("resultados.txt", "w") as f:
         write = csv.writer(f)
 
-        write.writerows(filas)
+        write.writerows(resultados)
+
+    # Graficamos los resultados
+    j = 0
+    eje_x = [fila[j] for fila in resultados]
+
+    cabeceras = [
+        "Tiempo de respuesta del sistema", 
+        "Productividad del sistema", 
+        "Tiempo de respuesta de los dispositivos",
+        "Productividad de los dispositivos",
+        "Trabajos de los dispositivos",
+        "Utilización de los dispositivos"]
+    
+    for i in range(len(cabeceras)):
+        eje_y = [fila[i] for fila in resultados]
+        print(eje_y)
+        plt.plot(eje_x, eje_y)
+        plt.xlabel("Trabajos")
+        plt.ylabel(f"{cabeceras[i]}")
+        plt.title(f"Algoritmo del Valor Medio - {cabeceras[i]}")
+        plt.savefig(f"{cabeceras[i]}.png")
 
 # Función para formatear los resultados
 def formatear(x):
