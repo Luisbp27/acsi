@@ -68,8 +68,14 @@ def __main__():
     # Graficamos los resultados del sistema
     for i in range(len(cabeceras)):
         plt.figure()
+
+        # Obtenemos los valores del eje y
         eje_y = [fila[i] for fila in resultados_sistema]
+
+        # Graficamos los resultados
         plt.plot(eje_x, eje_y)
+
+        # Añadimos las etiquetas
         plt.xlabel("Trabajos")
         plt.ylabel(f"{cabeceras[i]}")
         plt.title(f"{cabeceras[i]} del sistema")
@@ -79,10 +85,14 @@ def __main__():
     for i in range(len(cabeceras_i)):
         plt.figure()
         
+        # Obtenemos los valores del eje y de cada dispositivo
         for j in range(dispositivos):
             eje_y = [fila[i + 1] for fila in resultado_dispositivos if fila[0] == j]
+
+            # Graficamos los resultados
             plt.plot(eje_x, eje_y, label=f"Dispositivo {j}")
-            
+
+        # Añadimos las etiquetas
         plt.xlabel("Trabajos")
         plt.ylabel(f"{cabeceras_i[i]}")
         plt.title(f"{cabeceras_i[i]} de los dispositivos")
