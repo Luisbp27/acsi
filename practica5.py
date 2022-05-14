@@ -20,7 +20,8 @@ for i in range(len(csv_reader)):
 dispositivos = len(V)
 
 # Array bidimensional que contendra los resultados obtenidos
-resultados = []
+resultados_sistema = []
+resultado_dispositivos = []
 
 # Almacenamos el input del usuario
 N = int(input("Introduce el número de trabajos: "))
@@ -38,6 +39,8 @@ def __main__():
         R = formatear(calcularR(n))
         X = formatear(calcularX(n))
 
+        resultados_sistema.append([n, R, X])
+
         # Para todos los dispositivos
         for i in range(dispositivos):
             Ri = formatear(calcularRi(n, i))
@@ -45,37 +48,46 @@ def __main__():
             Ni = formatear(calcularNi(n, i))
             Ui = formatear(calcularUi(n, i))
 
-            if not i % 2 == 0:
-                resultados.append([n, R, X, Ri, Xi, Ni, Ui])
-
-    # Almacenamos los resultados en un fichero
-    with open("resultados.txt", "w") as f:
-        write = csv.writer(f)
-
-        write.writerows(resultados)
+            resultado_dispositivos.append([i, Ri, Xi, Ni, Ui])
 
     # Almacenamos los valores del eje x para todas las graficas
     j = 0
-    eje_x = [fila[j] for fila in resultados]
+    eje_x = [fila[j] for fila in resultados_sistema]
 
     # Almacenamos las cabeceras de los valores del eje y
     cabeceras = [
-        "Tiempo de respuesta del sistema (s)", 
-        "Productividad del sistema (trabajos/s)", 
-        "Tiempo de respuesta de los dispositivos (s)",
-        "Productividad de los dispositivos (trabajos/s)",
-        "Trabajos de los dispositivos",
-        "Utilización de los dispositivos (%)"]
+        "Tiempo de respuesta (s)", 
+        "Productividad (trabajos/s)"]
+        
+    cabeceras_i = [ 
+        "Tiempo de respuesta (s)",
+        "Productividad (trabajos/s)",
+        "Trabajos",
+        "Utilización (%)"]
 
-    # Graficamos los resultados
+    # Graficamos los resultados del sistema
     for i in range(len(cabeceras)):
         plt.figure()
-        eje_y = [fila[i] for fila in resultados]
+        eje_y = [fila[i] for fila in resultados_sistema]
         plt.plot(eje_x, eje_y)
         plt.xlabel("Trabajos")
         plt.ylabel(f"{cabeceras[i]}")
-        plt.title(f"{cabeceras[i]} frente a los Trabajos")
-        plt.savefig(f"{cabeceras[i]}.png")
+        plt.title(f"{cabeceras[i]} del sistema")
+        plt.savefig(f"grafica_sistema_{i}.png")
+
+    # Graficamos los resultados de los dispositivos
+    for i in range(len(cabeceras_i)):
+        plt.figure()
+        
+        for j in range(dispositivos):
+            eje_y = [fila[i + 1] for fila in resultado_dispositivos if fila[0] == j]
+            plt.plot(eje_x, eje_y, label=f"Dispositivo {j}")
+            
+        plt.xlabel("Trabajos")
+        plt.ylabel(f"{cabeceras_i[i]}")
+        plt.title(f"{cabeceras_i[i]} de los dispositivos")
+        plt.legend(loc='upper left')
+        plt.savefig(f"grafica_{i}.png")
 
 # Función para formatear los resultados
 def formatear(x):
