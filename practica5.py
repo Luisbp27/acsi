@@ -21,7 +21,7 @@ dispositivos = len(V)
 
 # Array bidimensional que contendra los resultados obtenidos
 resultados_sistema = []
-resultado_dispositivos = []
+resultados_dispositivos = []
 
 # Almacenamos el input del usuario
 N = int(input("Introduce el número de trabajos: "))
@@ -48,7 +48,19 @@ def __main__():
             Ni = formatear(calcularNi(n, i))
             Ui = formatear(calcularUi(n, i))
 
-            resultado_dispositivos.append([i, Ri, Xi, Ni, Ui])
+            resultados_dispositivos.append([i, Ri, Xi, Ni, Ui])
+
+    # Almacenamos los resultados dels sistema en un fichero
+    with open("resultados_sistema.txt", "w") as f:
+        write = csv.writer(f)
+
+        write.writerows(resultados_sistema)
+
+    # Almacenamos los resultados dels sistema en un fichero
+    with open("resultados_dispositivos.txt", "w") as f:
+        write = csv.writer(f)
+
+        write.writerows(resultados_dispositivos)
 
     # Almacenamos los valores del eje x para todas las graficas
     j = 0
@@ -62,7 +74,7 @@ def __main__():
     cabeceras_i = [ 
         "Tiempo de respuesta (s)",
         "Productividad (trabajos/s)",
-        "Trabajos",
+        "Trabajos en la estación",
         "Utilización (%)"]
 
     # Graficamos los resultados del sistema
@@ -70,10 +82,10 @@ def __main__():
         plt.figure()
 
         # Obtenemos los valores del eje y
-        eje_y = [fila[i] for fila in resultados_sistema]
+        eje_y = [fila[i + 1] for fila in resultados_sistema]
 
         # Graficamos los resultados
-        plt.plot(eje_x, eje_y)
+        plt.plot(eje_x, eje_y, marker = 'o', markersize = 3)
 
         # Añadimos las etiquetas
         plt.xlabel("Trabajos")
@@ -87,10 +99,10 @@ def __main__():
         
         # Obtenemos los valores del eje y de cada dispositivo
         for j in range(dispositivos):
-            eje_y = [fila[i + 1] for fila in resultado_dispositivos if fila[0] == j]
+            eje_y = [fila[i + 1] for fila in resultados_dispositivos if fila[0] == j]
 
             # Graficamos los resultados
-            plt.plot(eje_x, eje_y, label=f"Dispositivo {j}")
+            plt.plot(eje_x, eje_y, label=f"Dispositivo {j}", marker = 'o', markersize = 3)
 
         # Añadimos las etiquetas
         plt.xlabel("Trabajos")
