@@ -50,16 +50,14 @@ def __main__():
 
             resultados_dispositivos.append([i, Ri, Xi, Ni, Ui])
 
-    # Almacenamos los resultados dels sistema en un fichero
+    # Almacenamos los resultados del sistema en un fichero
     with open("resultados_sistema.txt", "w") as f:
         write = csv.writer(f)
-
         write.writerows(resultados_sistema)
 
-    # Almacenamos los resultados dels sistema en un fichero
+    # Almacenamos los resultados de los dispositivos en un fichero
     with open("resultados_dispositivos.txt", "w") as f:
         write = csv.writer(f)
-
         write.writerows(resultados_dispositivos)
 
     # Almacenamos los valores del eje x para todas las graficas
