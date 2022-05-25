@@ -7,7 +7,6 @@ parser.add_argument('-c', "--csv",   help="csv format?",
                     action=argparse.BooleanOptionalAction)
 args = parser.parse_args()
 
-
 def main():
     with open(args.input) as file:
         data = file.read().splitlines()
@@ -15,7 +14,6 @@ def main():
     # Remove header
     data.pop(0)
     with open(f"data.{'csv' if args.csv else 'arff'}", "x") as output:
-
         if args.csv:
             output.write("size,hour,MB/s\n")
         else:
@@ -51,14 +49,13 @@ def main():
 
             output.write(f"{line[0]},{line[1]},{line[2]}\n")
 
-
 def fractor_number(number):
     temp = number.split(".")
+
     if len(temp) == 3:
         return f"{temp[0]}{temp[1]}.{temp[2]}"
     else:
         return number
-
 
 if __name__ == "__main__":
     main()
