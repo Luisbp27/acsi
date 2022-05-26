@@ -10,18 +10,23 @@ parser.add_argument("-c", "--cluster", help="Select cluster number",
 args = parser.parse_args()
 
 def main():
+    # Get number of clusters from keyboard input
+    num_clusters = args.cluster
+
     plt.figure()
     ax = plt.axes(projection='3d')
 
-    for i in range(args.cluster):
+    # Get cluster data and make a scatter plot
+    for i in range(num_clusters):
         x_norm, y_norm, z_norm = get_cluster_norm_values(i)
-        ax.scatter3D(x_norm, y_norm, z_norm, c=colors[i], marker="o")
+        ax.scatter3D(x_norm, y_norm, z_norm, label=f"Cluster {i}", c=colors[i], marker="o")
         
     # Plot data
     ax.set_title(f"Representation of {args.cluster} clusters | K-Means Clustering with Euclidean Distance")
     ax.set_xlabel('Size (MB)')
     ax.set_ylabel('Time (h)')
     ax.set_zlabel('Speed (MB/s)')
+    ax.legend(bbox_to_anchor=(1.05, 1), ncol=num_clusters)
     plt.savefig("cube.png")
 
 
