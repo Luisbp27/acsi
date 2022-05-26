@@ -22,7 +22,7 @@ def main():
     for i in range(num_clusters):
         x_norm, y_norm, z_norm = get_cluster_norm_values(i)
         ax.scatter3D(x_norm, y_norm, z_norm,
-                     label=f"Cluster {i}", c=colors[i], marker="o")
+                     label=f"Cluster {i}", c=colors[i], marker="o", s=5.0)
 
     # Plot data
     ax.set_title(
