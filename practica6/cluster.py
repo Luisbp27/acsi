@@ -2,36 +2,40 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 
-colors = ("r", "g", "b")
+colors = ("red", "green", "blue", "yellow", "purple")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-c", "--cluster", help="Select cluster number",
-                    default=3, type=int)
+                    default=0, type=int)
 args = parser.parse_args()
 
-def main():
-    # Get number of clusters from keyboard input
-    num_clusters = args.cluster
+# Get number of clusters from keyboard input
+num_clusters = args.cluster
 
+
+def main():
     plt.figure()
+    plt.rcParams.update({"font.family": "serif"})
     ax = plt.axes(projection='3d')
 
     # Get cluster data and make a scatter plot
     for i in range(num_clusters):
         x_norm, y_norm, z_norm = get_cluster_norm_values(i)
-        ax.scatter3D(x_norm, y_norm, z_norm, label=f"Cluster {i}", c=colors[i], marker="o")
-        
+        ax.scatter3D(x_norm, y_norm, z_norm,
+                     label=f"Cluster {i}", c=colors[i], marker="o")
+
     # Plot data
-    ax.set_title(f"Representation of {args.cluster} clusters | K-Means Clustering with Euclidean Distance")
+    ax.set_title(
+        f"K-Means Algorithm with Euclidean Distance of {num_clusters} clusters")
     ax.set_xlabel('Size (MB)')
     ax.set_ylabel('Time (h)')
     ax.set_zlabel('Speed (MB/s)')
-    ax.legend(bbox_to_anchor=(1.05, 1), ncol=num_clusters)
-    plt.savefig("cube.png")
+    ax.legend(loc="upper right")
+    plt.savefig(f"cube_{num_clusters}.png")
 
 
 def get_cluster_norm_values(value):
-    with open("cluster.arff", "r") as file:
+    with open(f"cluster{num_clusters}.arff", "r") as file:
         data = file.read().splitlines()
 
     # Remove header
@@ -59,10 +63,13 @@ def get_cluster_norm_values(value):
     y_norm = [normalize(data, y_mn[0], y_mn[1]) for data in cluster_y]
     z_norm = [normalize(data, z_mn[0], z_mn[1]) for data in cluster_z]
 
+    # Return a tuple
     return x_norm, y_norm, z_norm
 
+
 def normalize(value, min, max):
-    return  (value - min) / (max - min)
+    return (value - min) / (max - min)
+
 
 if __name__ == "__main__":
     main()
