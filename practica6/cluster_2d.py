@@ -1,6 +1,5 @@
 import argparse
 import matplotlib.pyplot as plt
-import numpy as np
 
 colors = ("red", "green", "blue", "yellow", "purple")
 
@@ -36,7 +35,7 @@ def get_cluster_norm_values(value):
         data = file.read().splitlines()
 
     # Remove header
-    data = data[9:]
+    data = data[8:]
 
     # Create an array with the cluster data
     cluster_value = []
