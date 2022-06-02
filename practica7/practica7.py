@@ -9,6 +9,8 @@ parser.add_argument("-g", "--group", help="Select group or ungrouped data",
                     default=0, type=int)
 args = parser.parse_args()
 
+group = args.group
+
 with open("data.arff", "r") as file:
     data = file.read().splitlines()
 
@@ -20,58 +22,56 @@ hours = sorted(list({x.split(',')[1] for x in data}))
 def size():
     plt.figure()
     plt.rcParams.update({"font.family": "serif"})
-    ax_size = plt.axes()
 
-    x_size = []
+    x_arr = []
+    y_arr = []
 
-    if args.group == 0:
-        for hour in hours:
-            x, y = get_axes_ungrouped(0)
-            ax_size.scatter(x, y)
+    if group == 0:
+        x, y = get_axes(0)
+        plt.scatter(x, y)
+        x_arr.append(x)
+        y_arr.append(y)
+        
     else:
+        x_size = []
+
         for hour in hours:
             x = get_axes_mean(hour, 0)
-            ax_size.scatter(x, hour)
+            plt.scatter(x, hour)
             x_size.append(x)
 
-        lineal_regression(x_size)
-        moving_averages(x_size)
-        exponential_smoothing(x_size)
+    print(y_arr)
 
     # Plot data of size
-    ax_size.set_title("Size")
-    ax_size.set_xlabel('Time (h)')
-    ax_size.set_ylabel('Size (MB)')
-    plt.savefig("size.png")
+    plt.title("Size")
+    plt.xlabel('Time (h)')
+    plt.ylabel('Size (MB)')
+    plt.savefig(f"size_{group}.png")
 
 
 def velocity():
     plt.figure()
     plt.rcParams.update({"font.family": "serif"})
-    ax_velocity = plt.axes()
 
-    x_velocity = []
-
-    if args.group == 0:
-        for hour in hours:
-            x, y = get_axes_ungrouped(2)
-            ax_velocity.scatter(x, y)
+    if group == 0:
+        x, y = get_axes(2)
+        plt.scatter(x, y)
     else:
+        x_velocity = []
+
         for hour in hours:
             x, y = get_axes_mean(hour, 2)
-            ax_velocity.scatter(x, hour)
+            plt.scatter(x, hour)
             x_velocity.append(x)
 
-        lineal_regression(x_velocity)
-        moving_averages(x_velocity)
-        exponential_smoothing(x_velocity)
-
     # Plot data of velocity
-    ax_velocity.set_title("Velocity")
-    ax_velocity.set_xlabel('Time (h)')
-    ax_velocity.set_ylabel('Velocity (MB/s)')
-    plt.savefig("velocity.png")
+    plt.title("Velocity")
+    plt.xlabel('Time (h)')
+    plt.ylabel('Velocity (MB/s)')
+    plt.savefig(f"velocity_{group}.png")
 
+def format(x):
+    return float(('%.4f' % x).rstrip('0').rstrip('.'))
 
 def get_axes_mean(hour, value):
     x = []
@@ -82,12 +82,12 @@ def get_axes_mean(hour, value):
             x.append(float(line[value]))
 
     if value == 0:
-        return np.mean(x)
+        return format(np.mean(x))
     else:
-        return statistics.harmonic_mean(x)
+        return format(statistics.harmonic_mean(x))
 
 
-def get_axes_ungrouped(value):
+def get_axes(value):
     x = []
     y = []
 
