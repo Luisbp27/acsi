@@ -4,20 +4,13 @@ import matplotlib.pyplot as plt
 import argparse
 from sklearn.linear_model import LinearRegression
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-g", "--group", help="Select group or ungrouped data",
-                    default=1, type=int)
-args = parser.parse_args()
-
-group = args.group
-
 with open("data.arff", "r") as file:
     data = file.read().splitlines()
 
 data = data[8:]
 
 hours_label = ["22", "23", "01", "02", "03", "04", "05"]
-hours = np.arange(7)
+hours = np.arange(len(hours_label))
 
 
 def size():
@@ -26,33 +19,23 @@ def size():
 
     y_values = []
 
-    if group == 0:
-        x, y = get_axes(0)
-        plt.scatter(x, y, s=3)
+    for hour in hours_label:
+        y = get_axes_mean(hour, 0)
+        plt.scatter(hour, y, s=10, c="blue")
+        plt.xticks(hours, hours_label)
 
-        plt.title("Tamaño")
-        plt.xlabel('Tiempo (h)')
-        plt.ylabel('Tamaño (MB)')
-        plt.savefig(f"size_{group}.png")
+        # Data for post-processing
+        y_values.append(y)
 
-    else:
-        for hour in hours_label:
-            y = get_axes_mean(hour, 0)
-            plt.scatter(hour, y, s=10, c="blue")
-            plt.xticks(hours, hours_label)
+    plt.title("Media de los Tamaños (MB) frente al Tiempo (h)")
+    plt.xlabel('Tiempo (h)')
+    plt.ylabel('Tamaño (MB)')
+    plt.savefig(f"size.png")
 
-            # Data for post-processing
-            y_values.append(y)
-
-        plt.title("Tamaño")
-        plt.xlabel('Tiempo (h)')
-        plt.ylabel('Tamaño (MB)')
-        plt.savefig(f"size_{group}.png")
-
-        # Post-processing
-        linear_regression(y_values, "Tamaño (MB)")
-        moving_means(y_values, "Tamaño (MB)")
-        exponential_smoothing(y_values, "Tamaño (MB)")
+    # Post-processing
+    linear_regression(y_values, "Tamaño (MB)")
+    moving_means(y_values, "Tamaño (MB)")
+    exponential_smoothing(y_values, "Tamaño (MB)")
 
 
 def velocity():
@@ -61,50 +44,27 @@ def velocity():
 
     y_values = []
 
-    if group == 0:
-        x, y = get_axes(2)
-        plt.scatter(x, y, s=3)
+    for hour in hours_label:
+        y = get_axes_mean(hour, 2)
+        plt.scatter(hour, y, s=10, c="blue")
+        plt.xticks(hours, hours_label)
 
-        plt.title("Velocidad")
-        plt.xlabel('Tiempo (h)')
-        plt.ylabel('Velocidad (MBps)')
-        plt.savefig(f"velocity_{group}.png")
+        # Data for post-processing
+        y_values.append(y)
 
-    else:
-        for hour in hours_label:
-            y = get_axes_mean(hour, 2)
-            plt.scatter(hour, y, s=10, c="blue")
-            plt.xticks(hours, hours_label)
+    plt.title("Media de las Velocidades (MBps) frente al Tiempo (h)")
+    plt.xlabel('Tiempo (h)')
+    plt.ylabel('Velocidad (MBps)')
+    plt.savefig(f"velocity.png")
 
-            # Data for post-processing
-            y_values.append(y)
-
-        plt.title("Velocidad")
-        plt.xlabel('Tiempo (h)')
-        plt.ylabel('Velocidad (MBps)')
-        plt.savefig(f"velocity_{group}.png")
-
-        # Post-processing
-        linear_regression(y_values, "Velocidad (MBps)")
-        moving_means(y_values, "Velocidad (MBps)")
-        exponential_smoothing(y_values, "Velocidad (MBps)")
+    # Post-processing
+    linear_regression(y_values, "Velocidad (MBps)")
+    moving_means(y_values, "Velocidad (MBps)")
+    exponential_smoothing(y_values, "Velocidad (MBps)")
 
 
 def format(x):
     return float(('%.4f' % x).rstrip('0').rstrip('.'))
-
-
-def get_axes(value):
-    x = []
-    y = []
-
-    for line in data:
-        line = line.split(',')
-
-        x.append(int(line[1]))
-        y.append(float(line[value]))
-
-    return x, y
 
 
 def get_axes_mean(hour, value):
