@@ -14,11 +14,13 @@ hours = np.arange(len(hours_label))
 
 
 def size():
+    # Plot initialization
     plt.figure()
     plt.rcParams.update({"font.family": "serif"})
 
     y_values = []
 
+    # Get data for especific hour
     for hour in hours_label:
         y = get_axes_mean(hour, 0)
         plt.scatter(hour, y, s=10, c="blue")
@@ -27,6 +29,7 @@ def size():
         # Data for post-processing
         y_values.append(y)
 
+    # Save plot
     plt.title("Media de los Tamaños (MB) frente al Tiempo (h)")
     plt.xlabel('Tiempo (h)')
     plt.ylabel('Tamaño (MB)')
@@ -39,11 +42,13 @@ def size():
 
 
 def velocity():
+    # Plot initialization
     plt.figure()
     plt.rcParams.update({"font.family": "serif"})
 
     y_values = []
 
+    # Get data for especific hour
     for hour in hours_label:
         y = get_axes_mean(hour, 2)
         plt.scatter(hour, y, s=10, c="blue")
@@ -52,6 +57,7 @@ def velocity():
         # Data for post-processing
         y_values.append(y)
 
+    # Save plot
     plt.title("Media de las Velocidades (MBps) frente al Tiempo (h)")
     plt.xlabel('Tiempo (h)')
     plt.ylabel('Velocidad (MBps)')
@@ -91,7 +97,7 @@ def linear_regression(y, type):
     plt.rcParams.update({"font.family": "serif"})
     plt.scatter(x, y, s=10, c="blue")
 
-    # Linear regression
+    # Plor linear regression
     regr = LinearRegression().fit(x.reshape(-1, 1), y)
     plt.plot(x, regr.predict(x.reshape(-1, 1)), color='red')
 
@@ -109,6 +115,7 @@ def moving_means(y, type):
     cum_sum = np.cumsum(y)
     x = np.arange(len(y))
 
+    # Calculate moving averages
     while i <= len(y):
         window_average = round(cum_sum[i-1] / i, 2)
         moving_averages.append(window_average)
