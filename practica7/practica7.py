@@ -17,7 +17,7 @@ with open("data.arff", "r") as file:
 
 data = data[8:]
 
-hours = sorted(list({x.split(',')[1] for x in data}))
+hours = [ "22", "23", "01", "02", "03", "04", "05" ]
 
 print(hours)
 
@@ -36,6 +36,7 @@ def size():
             plt.scatter(hour, y, s = 8)
         
         lineal_regression(y, "size")
+        moving_averages(y, "size")
 
     # Plot data of size
     plt.title("Size")
@@ -57,6 +58,7 @@ def velocity():
             plt.scatter(hour, y, s = 8)
 
         lineal_regression(y, "velocity")
+        moving_averages(y, "velocity")
 
     # Plot data of velocity
     plt.title("Velocity")
@@ -103,11 +105,32 @@ def lineal_regression(y, type):
 
     plt.savefig(f"lineal_regression_{type}.png")
 
-def moving_averages():
-    pass
+def moving_averages(values, type):
+    plt.figure()
+    plt.rcParams.update({"font.family": "serif"})
 
-def exponential_smoothing():
-    pass
+    prediction = sum(values) / len(values)
+    hours.append("06")
+    values.append(prediction)
+
+    plt.plot(hours, values)
+
+    plt.savefig(f"moving_averages_{type}.png")
+
+def exponential_smoothing(values, type):
+    alpha = 0.5
+    values_hat = []
+
+    for hour in hours:
+        values.append(get_axes_mean(hour, 0))
+        values_hat.append(alpha * y[-1] + (1 - alpha) * y[-2])
+
+    plt.figure()
+    plt.rcParams.update({"font.family": "serif"})
+    plt.scatter(hours, values)
+    plt.plot(hours, values_hat)
+    plt.savefig(f"exponential_smoothing_{type}.png")
+    
 
 if __name__ == "__main__":
     size()
