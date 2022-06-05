@@ -1,8 +1,6 @@
 import numpy as np
 import statistics
 import matplotlib.pyplot as plt
-import argparse
-from sklearn.linear_model import LinearRegression
 
 with open("data.arff", "r") as file:
     data = file.read().splitlines()
@@ -10,6 +8,7 @@ with open("data.arff", "r") as file:
 data = data[8:]
 
 hours_label = ["22", "23", "01", "02", "03", "04", "05"]
+pred_hours_label = ["22", "23", "01", "02", "03", "04", "05", "06"]
 hours = np.arange(len(hours_label))
 
 
@@ -91,18 +90,31 @@ def get_axes_mean(hour, value):
 
 def linear_regression(y, type):
     x = np.arange(len(y))
+    
+    # Calculate means
+    x_mean = np.mean(x)
+    if type == "Velocidad (MBps)":
+        y_mean = statistics.harmonic_mean(y)
+    else:
+        y_mean = np.mean(y)
+
+    # Calculate b
+    b = (np.sum(y * x) - len(y) * x_mean * y_mean) / (np.sum(x * x) - len(x) * x_mean * x_mean)
+
+    # Calculate a
+    a = y_mean - b * x_mean
 
     # Plot data
     plt.figure()
     plt.rcParams.update({"font.family": "serif"})
     plt.scatter(x, y, s=10, c="blue")
 
-    # Plor linear regression
-    regr = LinearRegression().fit(x.reshape(-1, 1), y)
-    plt.plot(x, regr.predict(x.reshape(-1, 1)), color='red')
+    # Plot linear regression
+    x_plot = np.arange(len(pred_hours_label))
+    plt.plot(x_plot, a + b * x_plot, color='red')
 
     # Save plot
-    plt.xticks(x, hours_label)
+    plt.xticks(x_plot, pred_hours_label)
     plt.title(f"Regresión Lineal de {type}")
     plt.xlabel('Tiempo (h)')
     plt.ylabel(f"{type}")
@@ -116,10 +128,14 @@ def moving_means(y, type):
     x = np.arange(len(y))
 
     # Calculate moving averages
-    while i <= len(y):
+    i = 4
+    while i <= (len(y)):
         window_average = round(cum_sum[i-1] / i, 2)
         moving_averages.append(window_average)
         i += 1
+
+    # Calulate moving averages for next hour
+    moving_averages.append(np.sum(y[-4:])/4)
 
     # Plot data
     plt.figure()
@@ -127,10 +143,12 @@ def moving_means(y, type):
     plt.scatter(x, y, s=10, c="blue")
 
     # Plot moving averages
-    plt.plot(x, moving_averages, color="red")
+    x_plot = np.arange(3, 8)
+    plt.plot(x_plot, moving_averages, color="red")
 
     # Save plot
-    plt.xticks(x, hours_label)
+    x = np.arange(len(pred_hours_label))
+    plt.xticks(x, pred_hours_label)
     plt.title(f"Media Móvil de {type}")
     plt.xlabel('Tiempo (h)')
     plt.ylabel(f"{type}")
@@ -151,11 +169,15 @@ def exponential_smoothing(y, type):
     for i in range(1, len(y)):
         smoothed.append(alpha * y[i] + (1 - alpha) * smoothed[i-1])
 
+    # Calculate moving averages for next hour
+    smoothed.append(smoothed[-1])
+
     # Plot exponential smoothing
-    plt.plot(x, smoothed, color="red")
+    x_plot = np.arange(8)
+    plt.plot(x_plot, smoothed, color="red")
 
     # Save plot
-    plt.xticks(x, hours_label)
+    plt.xticks(x_plot, pred_hours_label)
     plt.title(f"Suavizado Exponencial de {type}")
     plt.xlabel('Tiempo (h)')
     plt.ylabel(f"{type}")
